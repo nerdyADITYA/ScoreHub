@@ -77,19 +77,3 @@ No server setup required — it’s a pure front-end project.
 * User authentication (admin/player roles)
 * Export results as PDF or CSV
 * Real-time multiplayer sync with WebSockets
-
----
-
-## 👨‍💻 Author
-
-**Aditya** – Computer Engineer, AIML Specialist
-Connect on [LinkedIn](www.linkedin.com/in/aditya-kadia-253b77233)
-
----
-
-```
-
----
-
-Let me know if you’d like this turned into a downloadable file, or if you're ready to integrate it into your GitHub repo!
-```
