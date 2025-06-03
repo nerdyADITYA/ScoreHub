@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket Score Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .team-section {
+            background-color: #111;
+            border: 1px solid #333;
+            padding: 25px;
+            margin: 15px 0;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease;
+        }
+
+        .team-section:hover {
+            transform: translateY(-2px);
+        }
+
+        .team-section input::placeholder{
+            color: white;
+            opacity: 1;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .player-list {
+            max-height: 300px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #444 #222;
+        }
+
+        .player-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .player-list::-webkit-scrollbar-track {
+            background: #222;
+        }
+
+        .player-list::-webkit-scrollbar-thumb {
+            background-color: #444;
+            border-radius: 4px;
+        }
+
+        .extras-section {
+            background-color: #222;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .card {
+            background-color: #111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-body {
+            color: #fff;
+        }
+
+        .form-control {
+            background-color: #222;
+            border: 1px solid #444;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            background-color: #333;
+            border-color: #666;
+            color: #fff;
+            box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+        }
+
+        .btn {
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: #444;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #555;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background-color: #bb2d3b;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #333;
+        }
+
+        .btn-secondary:hover {
+            background-color: #444;
+        }
+
+        .btn-success {
+            background-color: #225522;
+        }
+
+        .btn-success:hover {
+            background-color: #336633;
+        }
+
+        .badge {
+            padding: 8px 12px;
+            font-size: 0.9rem;
+        }
+
+        .bg-light {
+            background-color: #222 !important;
+        }
+
+        h1, h2, h3, h4 {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .team-section {
+                padding: 15px;
+                margin: 10px 0;
+            }
+
+            .score-display {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">🏏Cricket Score Tracker</h1>
+        
+        <!-- Match Settings -->
+        <div class="row mb-4">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Match Settings</h3>
+                        <div class="mb-3">
+                            <label class="form-label">Overs</label>
+                            <input type="number" id="total-overs" class="form-control" value="20" min="1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Batting Team Section -->
+            <div class="col-md-6">
+                <div class="team-section">
+                    <h2>Batting Team</h2>
+                    <input type="text" id="batting-team-name" class="form-control mb-3" placeholder="Enter Batting Team Name">
+                    
+                    <div class="mb-3">
+                        <input type="text" id="batsman-name" class="form-control mb-2" placeholder="Enter Batsman Name">
+                        <button onclick="addBatsman()" class="btn btn-primary">Add Batsman</button>
+                    </div>
+                    
+                    <div class="player-list mb-3" id="batsmen-list">
+                        <!-- Batsmen will be added here -->
+                    </div>
+
+                    <div class="extras-section">
+                        <h4>Extras</h4>
+                        <div class="d-flex gap-2">
+                            <button onclick="addExtra('wide')" class="btn btn-sm btn-secondary">Wide</button>
+                            <button onclick="addExtra('noBall')" class="btn btn-sm btn-secondary">No Ball</button>
+                            <button onclick="addExtra('byes')" class="btn btn-sm btn-secondary">Byes</button>
+                            <button onclick="addExtra('legByes')" class="btn btn-sm btn-secondary">Leg Byes</button>
+                        </div>
+                        <div class="mt-2">
+                            <span>Wides: <span id="wides">0</span></span>
+                            <span class="ms-2">No Balls: <span id="noBalls">0</span></span>
+                            <span class="ms-2">Byes: <span id="byes">0</span></span>
+                            <span class="ms-2">Leg Byes: <span id="legByes">0</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bowling Team Section -->
+            <div class="col-md-6">
+                <div class="team-section">
+                    <h2>Bowling Team</h2>
+                    <input type="text" id="bowling-team-name" class="form-control mb-3" placeholder="Enter Bowling Team Name">
+                    
+                    <div class="mb-3">
+                        <input type="text" id="bowler-name" class="form-control mb-2" placeholder="Enter Bowler Name">
+                        <button onclick="addBowler()" class="btn btn-primary">Add Bowler</button>
+                    </div>
+                    
+                    <div class="player-list mb-3" id="bowlers-list">
+                        <!-- Bowlers will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Score Display -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h3>Current Score</h3>
+                        <div class="score-display">
+                            <span id="total-runs">0</span>/<span id="wickets">0</span>
+                            (<span id="overs">0.0</span> ov)
+                        </div>
+                        <div class="mt-2">
+                            <span id="batting-team-display">Batting Team</span>
+                            vs
+                            <span id="bowling-team-display">Bowling Team</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- End Innings Button -->
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <button onclick="endInnings()" class="btn btn-danger btn-lg">End Innings</button>
+            </div>
+        </div>
+
+        <!-- Innings Result Display -->
+        <div class="row mt-4" id="innings-result" style="display: none;">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h3>Innings Summary</h3>
+                        <p id="result-text"></p>
+                        <div id="batting-stats"></div>
+                        <div id="bowling-stats"></div>
+                        <div id="extras-stats"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize main game state object to track match progress and statistics
+const gameState = {
+    battingTeam: {
+        name: 'Batting Team',
+        batsmen: [],           // Array to store individual batsman stats
+        extras: {              // Track different types of extra runs
+            wide: 0,
+            noBall: 0,
+            byes: 0,
+            legByes: 0
+        },
+        totalRuns: 0,          // Total runs scored by the team
+        wickets: 0             // Total wickets fallen
+    },
+    bowlingTeam: {
+        name: 'Bowling Team',
+        bowlers: []            // Array to store individual bowler stats
+    },
+    currentOver: 0,            // Current over number
+    currentBall: 0,            // Current ball in the over (0-5)
+    totalOvers: 20             // Total overs in the innings
+};
+
+/**
+ * Adds a new batsman to the batting team
+ * Creates a batsman object with initial statistics and adds to the team array
+ */
+function addBatsman() {
+    const batsmanName = document.getElementById('batsman-name').value.trim();
+    if (batsmanName) {
+        gameState.battingTeam.batsmen.push({
+            name: batsmanName,
+            runs: 0,           // Total runs scored
+            balls: 0,          // Balls faced
+            fours: 0,          // Number of 4s hit
+            sixes: 0,          // Number of 6s hit
+            isOut: false       // Batting status
+        });
+        updateBatsmenList();
+        document.getElementById('batsman-name').value = '';
+    }
+}
+
+/**
+ * Adds a new bowler to the bowling team
+ * Creates a bowler object with initial statistics and adds to the team array
+ */
+function addBowler() {
+    const bowlerName = document.getElementById('bowler-name').value.trim();
+    if (bowlerName) {
+        gameState.bowlingTeam.bowlers.push({
+            name: bowlerName,
+            overs: 0,          // Complete overs bowled
+            balls: 0,          // Balls in current over
+            runs: 0,           // Runs conceded
+            wickets: 0,        // Wickets taken
+            maidens: 0         // Maiden overs bowled
+        });
+        updateBowlersList();
+        document.getElementById('bowler-name').value = '';
+    }
+}
+
+/**
+ * Updates the UI display of batsmen list
+ * Generates HTML for each batsman showing their current stats and action buttons
+ */
+function updateBatsmenList() {
+    const batsmenList = document.getElementById('batsmen-list');
+    batsmenList.innerHTML = gameState.battingTeam.batsmen.map((batsman, index) => `
+        <div class="card mb-2 ${batsman.isOut ? 'bg-light' : ''}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>${batsman.name} ${batsman.isOut ? '(OUT)' : ''}</span>
+                    <div>
+                        <span class="badge bg-primary me-2">${batsman.runs}(${batsman.balls})</span>
+                        <span class="badge bg-info me-2">4s: ${batsman.fours}</span>
+                        <span class="badge bg-warning me-2">6s: ${batsman.sixes}</span>
+                        ${!batsman.isOut ? `
+                            <button onclick="addRuns(${index}, 1)" class="btn btn-success btn-sm">1</button>
+                            <button onclick="addRuns(${index}, 2)" class="btn btn-success btn-sm">2</button>
+                            <button onclick="addRuns(${index}, 4)" class="btn btn-success btn-sm">4</button>
+                            <button onclick="addRuns(${index}, 6)" class="btn btn-success btn-sm">6</button>
+                            <button onclick="wicket(${index})" class="btn btn-danger btn-sm">Out</button>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+/**
+ * Updates the UI display of bowlers list
+ * Generates HTML for each bowler showing their current bowling figures
+ */
+function updateBowlersList() {
+    const bowlersList = document.getElementById('bowlers-list');
+    bowlersList.innerHTML = gameState.bowlingTeam.bowlers.map((bowler, index) => `
+        <div class="card mb-2">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>${bowler.name}</span>
+                    <div>
+                        <span class="badge bg-primary me-2">${bowler.overs}.${bowler.balls} ov</span>
+                        <span class="badge bg-danger me-2">${bowler.wickets}/${bowler.runs}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+/**
+ * Records runs scored by a batsman
+ * Updates both individual batsman stats and team total
+ * @param {number} batsmanIndex - Index of batsman in the team array
+ * @param {number} runs - Number of runs scored (1,2,4,6)
+ */
+function addRuns(batsmanIndex, runs) {
+    const batsman = gameState.battingTeam.batsmen[batsmanIndex];
+    batsman.runs += runs;
+    batsman.balls += 1;
+    if (runs === 4) batsman.fours++;
+    if (runs === 6) batsman.sixes++;
+    
+    gameState.battingTeam.totalRuns += runs;
+    gameState.currentBall++;
+    if (gameState.currentBall === 6) {
+        gameState.currentOver++;
+        gameState.currentBall = 0;
+    }
+    
+    updateScore();
+    updateBatsmenList();
+}
+
+/**
+ * Records extra runs (wides, no-balls, byes, leg-byes)
+ * @param {string} type - Type of extra run
+ */
+function addExtra(type) {
+    gameState.battingTeam.extras[type]++;
+    if (type === 'wide' || type === 'noBall') {
+        gameState.battingTeam.totalRuns++;
+    }
+    document.getElementById(type + 's').textContent = gameState.battingTeam.extras[type];
+    updateScore();
+}
+
+/**
+ * Records a wicket
+ * Updates batsman status and team wickets count
+ * @param {number} batsmanIndex - Index of dismissed batsman
+ */
+function wicket(batsmanIndex) {
+    const batsman = gameState.battingTeam.batsmen[batsmanIndex];
+    batsman.isOut = true;
+    gameState.battingTeam.wickets++;
+    gameState.currentBall++;
+    if (gameState.currentBall === 6) {
+        gameState.currentOver++;
+        gameState.currentBall = 0;
+    }
+    updateScore();
+    updateBatsmenList();
+}
+
+/**
+ * Updates the main score display
+ * Shows current total, wickets, and overs
+ */
+function updateScore() {
+    document.getElementById('total-runs').textContent = gameState.battingTeam.totalRuns;
+    document.getElementById('wickets').textContent = gameState.battingTeam.wickets;
+    document.getElementById('overs').textContent = 
+        `${gameState.currentOver}.${gameState.currentBall}`;
+}
+
+// Event listeners for team name updates
+document.getElementById('batting-team-name').addEventListener('input', function(e) {
+    gameState.battingTeam.name = e.target.value || 'Batting Team';
+    document.getElementById('batting-team-display').textContent = gameState.battingTeam.name;
+});
+
+document.getElementById('bowling-team-name').addEventListener('input', function(e) {
+    gameState.bowlingTeam.name = e.target.value || 'Bowling Team';
+    document.getElementById('bowling-team-display').textContent = gameState.bowlingTeam.name;
+});
+
+// Event listener for total overs update
+document.getElementById('total-overs').addEventListener('input', function(e) {
+    gameState.totalOvers = parseInt(e.target.value) || 20;
+});
+
+/**
+ * Generates and displays the innings summary
+ * Shows final score, batting statistics, and extras
+ */
+function endInnings() {
+    const battingTeam = gameState.battingTeam;
+    const extras = battingTeam.extras;
+    const totalExtras = extras.wide + extras.noBall + extras.byes + extras.legByes;
+
+    // Generate final score line
+    const resultText = `${battingTeam.name}: ${battingTeam.totalRuns}/${battingTeam.wickets} (${gameState.currentOver}.${gameState.currentBall} ov)`;
+    
+    // Generate batting statistics
+    let battingStats = '<h4>Batting</h4>';
+    battingTeam.batsmen.forEach(batsman => {
+        const strikeRate = ((batsman.runs / batsman.balls) * 100).toFixed(2);
+        battingStats += `<p>${batsman.name}: ${batsman.runs}(${batsman.balls}) - 4s: ${batsman.fours}, 6s: ${batsman.sixes}, SR: ${strikeRate}</p>`;
+    });
+
+    // Generate extras summary
+    const extrasStats = `<h4>Extras</h4>
+        <p>Wides: ${extras.wide}, No Balls: ${extras.noBall}, Byes: ${extras.byes}, Leg Byes: ${extras.legByes}
+        <br>Total Extras: ${totalExtras}</p>`;
+
+    // Update the results display
+    document.getElementById('result-text').textContent = resultText;
+    document.getElementById('batting-stats').innerHTML = battingStats;
+    document.getElementById('extras-stats').innerHTML = extrasStats;
+    document.getElementById('innings-result').style.display = 'block';
+}
+    </script>
+</body>
+</html>
